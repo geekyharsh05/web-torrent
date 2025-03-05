@@ -1,15 +1,30 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { TorrentList } from "@/components/torrent-list"
-import { TorrentSidebar } from "@/components/torrent-sidebar"
-import { TorrentDetails } from "@/components/torrent-details"
-import { AddTorrentDialog } from "@/components/add-torrent-dialog"
-import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
+import { useState } from "react";
+import { TorrentList } from "@/components/torrent-list";
+import { TorrentSidebar } from "@/components/torrent-sidebar";
+import { TorrentDetails } from "@/components/torrent-details";
+import { AddTorrentDialog } from "@/components/add-torrent-dialog";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+
+type Torrent = {
+  id: string;
+  name: string;
+  size: number;
+  progress: number;
+  status: "downloading" | "seeding" | "paused" | "checking" | "error"; // Ensure this matches your expected values
+  downloadSpeed: number;
+  uploadSpeed: number;
+  peers: number;
+  seeds: number;
+  eta: string;
+  dateAdded: Date;
+  files: { name: string; size: number; progress: number }[];
+};
 
 // Sample data for demonstration
-const sampleTorrents = [
+const sampleTorrents: Torrent[] = [
   {
     id: "1",
     name: "Ubuntu 22.04 LTS",
@@ -22,7 +37,13 @@ const sampleTorrents = [
     seeds: 120,
     eta: "00:45:30",
     dateAdded: new Date("2023-10-15T14:30:00"),
-    files: [{ name: "ubuntu-22.04-desktop-amd64.iso", size: 3_800_000_000, progress: 0.85 }],
+    files: [
+      {
+        name: "ubuntu-22.04-desktop-amd64.iso",
+        size: 3_800_000_000,
+        progress: 0.85,
+      },
+    ],
   },
   {
     id: "2",
@@ -36,7 +57,13 @@ const sampleTorrents = [
     seeds: 0,
     eta: "00:00:00",
     dateAdded: new Date("2023-10-10T09:15:00"),
-    files: [{ name: "debian-12.0.0-amd64-netinst.iso", size: 2_700_000_000, progress: 1 }],
+    files: [
+      {
+        name: "debian-12.0.0-amd64-netinst.iso",
+        size: 2_700_000_000,
+        progress: 1,
+      },
+    ],
   },
   {
     id: "3",
@@ -50,7 +77,13 @@ const sampleTorrents = [
     seeds: 65,
     eta: "01:20:15",
     dateAdded: new Date("2023-10-16T18:45:00"),
-    files: [{ name: "archlinux-2023.10.01-x86_64.iso", size: 900_000_000, progress: 0.32 }],
+    files: [
+      {
+        name: "archlinux-2023.10.01-x86_64.iso",
+        size: 900_000_000,
+        progress: 0.32,
+      },
+    ],
   },
   {
     id: "4",
@@ -64,7 +97,13 @@ const sampleTorrents = [
     seeds: 42,
     eta: "03:10:45",
     dateAdded: new Date("2023-10-17T10:20:00"),
-    files: [{ name: "Fedora-Workstation-Live-x86_64-38.iso", size: 2_100_000_000, progress: 0.05 }],
+    files: [
+      {
+        name: "Fedora-Workstation-Live-x86_64-38.iso",
+        size: 2_100_000_000,
+        progress: 0.05,
+      },
+    ],
   },
   {
     id: "5",
@@ -78,22 +117,30 @@ const sampleTorrents = [
     seeds: 90,
     eta: "00:05:10",
     dateAdded: new Date("2023-10-14T21:30:00"),
-    files: [{ name: "linuxmint-21.2-cinnamon-64bit.iso", size: 2_500_000_000, progress: 0.98 }],
+    files: [
+      {
+        name: "linuxmint-21.2-cinnamon-64bit.iso",
+        size: 2_500_000_000,
+        progress: 0.98,
+      },
+    ],
   },
-]
+];
 
 export function TorrentDashboard() {
-  const [selectedTorrentId, setSelectedTorrentId] = useState<string | null>(null)
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
-  const [torrents, setTorrents] = useState(sampleTorrents)
+  const [selectedTorrentId, setSelectedTorrentId] = useState<string | null>(
+    null
+  );
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [torrents] = useState(sampleTorrents);
 
-  const selectedTorrent = torrents.find((t) => t.id === selectedTorrentId)
+  const selectedTorrent = torrents.find((t) => t.id === selectedTorrentId);
 
   const handleAddTorrent = (magnetUrl: string, downloadPath: string) => {
     // In a real app, this would connect to a backend service
-    console.log("Adding torrent:", magnetUrl, "to path:", downloadPath)
-    setIsAddDialogOpen(false)
-  }
+    console.log("Adding torrent:", magnetUrl, "to path:", downloadPath);
+    setIsAddDialogOpen(false);
+  };
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -108,7 +155,11 @@ export function TorrentDashboard() {
         </div>
         <div className="flex flex-1 overflow-hidden">
           <div className="w-full lg:w-2/3 overflow-auto">
-            <TorrentList torrents={torrents} selectedId={selectedTorrentId} onSelect={setSelectedTorrentId} />
+            <TorrentList
+              torrents={torrents}
+              selectedId={selectedTorrentId}
+              onSelect={setSelectedTorrentId}
+            />
           </div>
           <div className="hidden lg:block lg:w-1/3 border-l overflow-auto">
             {selectedTorrent ? (
@@ -121,8 +172,11 @@ export function TorrentDashboard() {
           </div>
         </div>
       </div>
-      <AddTorrentDialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen} onAdd={handleAddTorrent} />
+      <AddTorrentDialog
+        open={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+        onAdd={handleAddTorrent}
+      />
     </div>
-  )
+  );
 }
-
